@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    width: 100vw;
+    height: auto;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, purple, orange);
+    font-family: monospace;
+}
+
+.trigger {
+    width: 600px;
+    height: 200px;
+    margin: 0 auto;
+    background-color: purple;
+    padding: 5px;
+}
+
+.trigger div {
+    display: inline-block;
+    width: 32.4%;
+    height: 100%;
+    font-size: 40px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: orange;
+    color: purple;
+}
+
+.hint {
+    width: 600px;
+    margin: 0 auto;
+    background-color: transparent;
+    font-size: 24px;
+    color: purple;
+}
+
+.stats {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 40px;
+}

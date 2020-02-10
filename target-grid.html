@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Elements</title>
+    <style>
+        svg polygon {
+            fill: white;
+            stroke: black;
+            stroke-width: 1;
+        }
+
+        svg polygon:hover {
+            fill: red;
+        }
+    </style>
+</head>
+<body>
+    <svg height="1000" width="1000">
+    </svg>
+</body>
+</html>
+
+<script>
+    let svg = document.querySelector("svg");
+    console.log(svg)
+    let x0 = 500,
+        y0 = 500,
+        side = 50,
+        hexGrid = [[-1,5],[-3,5],[-5,5],[-6,4],[-6,2],[-6,0]];    
+    for(let i=-3; i<hexGrid.length-3; i++) {
+        for(let j=hexGrid[i+3][0]; j<=hexGrid[i+3][1]; j++) {
+            let x = y0 + side/2  * j + i * side * 0.5,
+                y = x0 + side * Math.sin(60/360 * 2 * Math.PI) * i;
+            console.log(i,j,hexGrid[i+3][0],hexGrid[i+3][1]);
+
+            if( j % 2 === 0) {
+                triangle = evenTriangle(x,y,side);
+            } else {
+                triangle = oddTriangle(x,y,side);
+            }
+            
+
+            let text = document.createElement("text");
+            text.setAttribute("x", x);
+            text.setAttribute("y", y + Math.sin(60) * side * 0.5);
+            text.innerText = `${x},${y + Math.sin(60) * side * 0.5}`;
+            
+            svg.appendChild(triangle.node);
+            svg.appendChild(text);
+        }
+    }
+
+    function evenTriangle(x, y, side) {
+        let height = side * Math.sin(60/360 * 2 * Math.PI);
+        return new Polygon(x - side/2, y, x + side/2, y, x, y + height);
+    }
+
+    function oddTriangle(x, y, side) {
+        let height = side * Math.sin(60/360 * 2 * Math.PI);
+        return new Polygon(x, y, x + side/2, y + height, x - side/2, y + height);
+    }
+
+    function Polygon() {
+        var pointList = [];
+
+        this.node = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+
+        function build(arg) {
+            var res = [];
+            for (var i = 0, l = arg.length; i < l; i++) {
+                res.push(arg[i].join(','));
+            }
+            return res.join(' ');
+        }
+
+        this.attribute = function (key, val) {
+            if (val === undefined) return this.node.getAttribute(key);
+            this.node.setAttribute(key, val);
+        };
+
+        this.getPoint = function (i) {
+            return pointList[i]
+        };
+
+        this.setPoint = function (i, x, y) {
+            pointList[i] = [x, y];
+            this.attribute('points', build(pointList));
+        };
+
+        this.points = function () {
+            for (var i = 0, l = arguments.length; i < l; i += 2) {
+                pointList.push([arguments[i], arguments[i + 1]]);
+            }
+            this.attribute('points', build(pointList));
+        };
+
+        this.points.apply(this, arguments);
+    }
+</script>

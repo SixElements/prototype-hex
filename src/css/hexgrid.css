@@ -1,0 +1,71 @@
+svg {
+    display: block;
+    margin: 0 auto;
+}
+
+svg polygon {
+    fill: #ca870d;
+    stroke: #8c5d06;
+    stroke-width: 2;
+    transition: fill .5s ease;
+    stroke-dasharray: 50,150 ;
+}
+
+svg polygon[data-r="0"] {
+    fill: #9f199f;
+    stroke: orange;
+    transition: fill .5s ease;
+} 
+
+svg polygon[data-phi="0"],
+svg polygon[data-phi="1"] {
+
+}
+
+svg polygon[data-enemy="A"] {
+    fill: red;
+    transition: fill .5s ease;
+} 
+
+svg polygon[data-enemy="B"] {
+    fill: rgb(0, 141, 0);
+    transition: fill .5s ease;
+} 
+
+svg polygon[data-enemy="C"] {
+    fill: rgb(75, 233, 75);
+    transition: fill .5s ease;
+} 
+
+svg polygon[data-enemy="D"] {
+    fill: rgb(211, 2, 30);
+    transition: fill .5s ease;
+} 
+
+svg polygon[data-trapped="true"] {
+    fill: rgb(255, 0, 212);
+    transition: fill .5s ease;
+} 
+
+svg polygon[data-obstacle="true"] {
+    fill: rgb(129, 96, 64);
+    transition: fill .5s ease;
+} 
+
+svg polygon[data-effect="pulse"] {
+    animation: pulse 1s linear alternate infinite;
+}
+
+@keyframes pulse {
+    from {fill: rgb(94, 0, 12);}
+    to {fill: rgb(211, 2, 30);}
+}
+
+svg polygon[data-hit="true"] {
+    fill: yellow; 
+}
+
+
+svg polygon:hover {
+    fill: white;
+}

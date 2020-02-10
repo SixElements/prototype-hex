@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Elements</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom, purple, orange);
+        }
+
+        svg polygon {
+            fill: #ca870d;
+            stroke: #8c5d06;
+            stroke-width: 1;
+        }
+
+        svg polygon[data-r="0"],
+        svg polygon[data-r="2"],
+        svg polygon[data-r="4"] {
+            fill: #9f199f;
+            stroke: orange;
+        } 
+
+        svg polygon:hover {
+            fill: #ec02ea;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <svg height="1000" width="1000">
+    </svg>
+</body>
+</html>
+<script src="vendors/victor-1.1.0/build/victor.js"></script>
+<script>
+
+    let svg = document.querySelector("svg");
+    console.log(svg)
+    let x0 = 500,
+        y0 = 500,
+        side = 50,
+        height = side * Math.sin(60/360 * 2 * Math.PI);
+
+    let intervals = [],
+        fields = [];
+    for(let r=0; r<6; r++) {
+        let phi=0, phiSegment = (2 * r) + 1, phiMax = phiSegment * 6;
+        fields[r] = [];
+        intervals[r] = setInterval(function() {
+            let petri = ((phi % phiSegment) * 0.5 * side) - side * (r+1)/2,
+                radius = -(r) * height;
+                rotation = Math.floor(phi / phiSegment) * 60;
+            
+            if( (phi % phiSegment) % 2 !== 0) {
+                triangle = evenTriangle(petri, radius, rotation ,side, height, x0, y0);
+                triangle.node.setAttribute("data-type", "out");
+            } else {
+                triangle = oddTriangle(petri, radius, rotation ,side, height, x0, y0);
+                triangle.node.setAttribute("data-type", "in");
+            }
+            triangle.node.setAttribute("data-phi", phi);
+            triangle.node.setAttribute("data-r", r);
+
+            //console.log("POLY at: ( " + phi + ", " + r + " ) r( " + rotation + " )");
+            svg.appendChild(triangle.node);
+            fields[r][phi] = {};
+            phi++;
+            if(phi >= phiMax) {
+                clearInterval(intervals[r]);
+            }
+        }, 20);
+        
+    }
+
+    svg.querySelectorAll("polygon").forEach(e => {
+        e.addEventListener("click", e=> {
+            console.log(e.target.dataset.phi, e.target.dataset.r, e.target.dataset.type);
+        });
+    }
+
+    )
+
+    function evenTriangle(petri, radius, rotation, side, height, x0, y0) {
+        let a = new Victor(petri, radius),
+            b = new Victor(petri + side, radius),
+            c = new Victor(petri + side/2, radius - height);
+
+        [a,b,c].forEach(e => e.rotateDeg(rotation).addX(new Victor(x0,0)).addY(new Victor(0,y0)));
+        return new Polygon(a.x, a.y, b.x, b.y, c.x, c.y);
+    }
+
+    function oddTriangle(petri, radius, rotation, side, height, x0, y0) {
+        let a = new Victor(petri + side/2, radius),
+            b = new Victor(petri + side, radius - height),
+            c = new Victor(petri, radius - height);
+
+        [a,b,c].forEach(e => e.rotateDeg(rotation).addX(new Victor(x0,0)).addY(new Victor(0,y0)));
+        return new Polygon(a.x, a.y, b.x, b.y, c.x, c.y);
+    }
+
+    function Polygon() {
+        var pointList = [];
+
+        this.node = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+
+        function build(arg) {
+            var res = [];
+            for (var i = 0, l = arg.length; i < l; i++) {
+                res.push(arg[i].join(','));
+            }
+            return res.join(' ');
+        }
+
+        this.attribute = function (key, val) {
+            if (val === undefined) return this.node.getAttribute(key);
+            this.node.setAttribute(key, val);
+        };
+
+        this.getPoint = function (i) {
+            return pointList[i]
+        };
+
+        this.setPoint = function (i, x, y) {
+            pointList[i] = [x, y];
+            this.attribute('points', build(pointList));
+        };
+
+        this.points = function () {
+            for (var i = 0, l = arguments.length; i < l; i += 2) {
+                pointList.push([arguments[i], arguments[i + 1]]);
+            }
+            this.attribute('points', build(pointList));
+        };
+
+        this.points.apply(this, arguments);
+    }
+</script>
